@@ -1,6 +1,0 @@
-olá mundo!
-testando branches
-
-spring boot
-
-sql
