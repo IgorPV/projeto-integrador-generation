@@ -41,7 +41,7 @@ public class Temas {
 	private List<Posts> posts;
 	
 	@ManyToMany(mappedBy = "temasInscritos", cascade = CascadeType.ALL)
-	@JsonIgnoreProperties({"senha","email","CPF","temasInscritos"})
+	@JsonIgnoreProperties({"senha","email","temasInscritos","postsUsuario"})
 	private List<Usuario> usuariosInscritos;
 
 	public Long getId() {

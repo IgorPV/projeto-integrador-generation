@@ -21,7 +21,7 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "Usuario", uniqueConstraints= @UniqueConstraint(columnNames={"nome", "email", "CPF"}))
+@Table(name = "Usuario", uniqueConstraints= @UniqueConstraint(columnNames={"nome", "email"}))
 
 
 public class Usuario {
@@ -32,17 +32,18 @@ public class Usuario {
 	private Long id;
 	
 	@NotNull
-	@Size(min = 5, max = 256)
+	@Size(min = 1, max = 255)
 	private String nome;
 	
 	@NotNull
-	@Size(min = 10, max = 500)
+	@Size(min = 10, max = 255)
 	private String email;
 	
 	@NotNull
-	@Size (min = 6, max = 1000)
+	@Size (min = 6, max = 255)
 	private String senha;
 	
+	private String foto;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "Inscrição", 
@@ -50,11 +51,11 @@ public class Usuario {
 					@JoinColumn(name = "usuarioId"),
 				inverseJoinColumns = 	
 					@JoinColumn(name = "temaId"))
-	@JsonIgnoreProperties({"usuariosInscritos"})
+	@JsonIgnoreProperties({"usuariosInscritos","posts"})
 	private List<Temas> temasInscritos;
 	
 	
-	@OneToMany(mappedBy = "usuarioCriador", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "usuarioCriador", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties("usuarioCriador")
 	private List<Posts> postsUsuario;
 
@@ -108,8 +109,13 @@ public class Usuario {
 		this.postsUsuario = postsUsuario;
 	}
 
-	
-	
-	
+	public String getFoto() {
+		return foto;
+	}
 
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+	
+	
 }

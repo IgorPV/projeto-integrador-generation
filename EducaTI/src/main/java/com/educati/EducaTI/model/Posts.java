@@ -38,11 +38,11 @@ public class Posts {
 	private Date dataPosts = new java.sql.Date(System.currentTimeMillis());
 	
 	@ManyToOne
-	@JsonIgnoreProperties("posts")
+	@JsonIgnoreProperties({"posts","usuariosInscritos"})
 	private Temas temas;
 	
 	@ManyToOne
-	@JsonIgnoreProperties({"postsUsuario", "senha","CPF","email"})
+	@JsonIgnoreProperties({"postsUsuario", "senha","email","temasInscritos"})
 	private Usuario usuarioCriador;
 
 	public Long getIdPosts() {
