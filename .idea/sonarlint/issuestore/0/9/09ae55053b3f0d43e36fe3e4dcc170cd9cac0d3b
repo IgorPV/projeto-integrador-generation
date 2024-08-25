@@ -1,0 +1,4 @@
+
+	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ήϊÿÿÿÿJ$ab167f30-93fb-4c53-9c4b-6779e96cc98a
+y
+java:S4719D"=Replace Charset.forName() call with StandardCharsets.US_ASCII(ήρ―J$85b315eb-ff89-43a0-a125-e8577174f0da

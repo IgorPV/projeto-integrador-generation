@@ -24,11 +24,15 @@ import io.swagger.annotations.ApiOperation;
 @CrossOrigin(origins = "*" , allowedHeaders = "*")
 @RequestMapping("/post")
 public class PostsController {
-	
-	@Autowired
+
 	private PostsRepository repository;
-	
-	@GetMapping
+
+	@Autowired
+    public PostsController(PostsRepository repository) {
+        this.repository = repository;
+    }
+
+    @GetMapping
 	@ApiOperation(value="Retorna lista de Posts")
 	public ResponseEntity<List<Posts>> getAll(){
 		return ResponseEntity.ok(repository.findAll());

@@ -25,12 +25,14 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/tema")
 public class TemasController {
 	
-	@Autowired
 	private TemasRepository repository;
-	
-	
-	
-	@GetMapping
+
+    public TemasController(TemasRepository repository) {
+        this.repository = repository;
+    }
+
+
+    @GetMapping
 	@ApiOperation(value="Retorna lista de Temas")
 	public ResponseEntity<List<Temas>>getAll(){
 		return ResponseEntity.ok(repository.findAll());

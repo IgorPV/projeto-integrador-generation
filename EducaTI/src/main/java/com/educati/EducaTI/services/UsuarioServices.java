@@ -19,17 +19,21 @@ import com.educati.EducaTI.repository.UsuarioRepository;
 @Service
 public class UsuarioServices {
 	
-	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	@Autowired
 	private PostsRepository postsRepository;
 	
-	@Autowired
 	private TemasRepository temasRepository;
-	
-	
-	public Optional<Usuario> cadastroUsuario(Usuario novoUsuario) {
+
+	@Autowired
+    public UsuarioServices(UsuarioRepository usuarioRepository, PostsRepository postsRepository, TemasRepository temasRepository) {
+        this.usuarioRepository = usuarioRepository;
+        this.postsRepository = postsRepository;
+        this.temasRepository = temasRepository;
+    }
+
+
+    public Optional<Usuario> cadastroUsuario(Usuario novoUsuario) {
 	
 		if (usuarioRepository.findByEmail(novoUsuario.getEmail()).isEmpty()) {
 			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

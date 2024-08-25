@@ -3,6 +3,7 @@ package com.educati.EducaTI.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.educati.EducaTI.utils.ErrorMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,21 +33,25 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/usuario")
 
 public class UsuarioController {
-	
-	@Autowired
+
 	private UsuarioRepository repository;
-	
-	@Autowired
+
 	private TemasRepository temasRepository;
-	
-	@Autowired
+
 	private PostsRepository postRepository; 
-	
+
+	private UsuarioServices service;
+
 	@Autowired
-	UsuarioServices service;
-		
-	
-	@GetMapping
+    public UsuarioController(UsuarioRepository repository, TemasRepository temasRepository, PostsRepository postRepository, UsuarioServices service) {
+        this.repository = repository;
+        this.temasRepository = temasRepository;
+        this.postRepository = postRepository;
+        this.service = service;
+    }
+
+
+    @GetMapping
 	@ApiOperation(value="Retorna uma lista de Usuário")
 	public ResponseEntity<List<Usuario>>getAll(){
 		return ResponseEntity.ok(repository.findAll());
@@ -67,62 +72,49 @@ public class UsuarioController {
 	
 	@PostMapping("/cadastrar")
 	@ApiOperation(value="Cadastra um Usuário")
-	public ResponseEntity<?> cadastro(@RequestBody Usuario usuario){
+	public ResponseEntity<Object> cadastro(@RequestBody Usuario usuario){
 		Optional<Usuario> novoUsuario = service.cadastroUsuario(usuario);
-			if (novoUsuario.isPresent()) {
-				return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
+			if (novoUsuario.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorMessages.USER_ALREADY_EXISTS);
 			}
-			else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Erro: O usuário que está tentando criar já existe.");
-			}	
+		return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
 	}
 	
 	@PostMapping("/login")
 	@ApiOperation(value="Realiza o login do Usuário")
-	public ResponseEntity<?> logar(@RequestBody Optional<UsuarioLogin> usuarioConnect){
+	public ResponseEntity<Object> logar(@RequestBody Optional<UsuarioLogin> usuarioConnect){
 		Optional<UsuarioLogin> novoLogin = service.loginUsuario(usuarioConnect);
-			if (novoLogin.isPresent()) {
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body(novoLogin);
-			} else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Erro: Não é possivel efetuar o login, verifique e-mail e senha.");
+			if (novoLogin.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorMessages.LOGIN_ERROR);
 			}
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(novoLogin);
 	}
 	
 		
 	@PostMapping("/cadastrar/{id}/post")
 	@ApiOperation(value="Post criado por um Usuário")
-	public ResponseEntity<?> criarPost(@RequestBody Posts posts, @PathVariable Long id){
+	public ResponseEntity<Object> criarPost(@RequestBody Posts posts, @PathVariable Long id){
 		Optional<Usuario> postNovo = service.criarPost(posts, id);
-			if (postNovo.isPresent()) {
-				return ResponseEntity.status(HttpStatus.CREATED).body(postNovo);
+			if (postNovo.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorMessages.ACCOUNT_NOT_FOUND);
 			}
-			else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Erro: Conta não existe.");
-			}	
+		return ResponseEntity.status(HttpStatus.CREATED).body(postNovo);
 	}
 	
 	@PostMapping("/inscricao/{idTema}/{idUsuario}")
 	@ApiOperation(value="Usuário inscreve um Tema")
-	public ResponseEntity<?> inscreverTema(@PathVariable Long idTema, @PathVariable Long idUsuario){
-		
+	public ResponseEntity<Object> inscreverTema(@PathVariable Long idTema, @PathVariable Long idUsuario){
 		Optional<Usuario> usuarioValido = repository.findById(idUsuario);
 		Optional<Temas> temaValido = temasRepository.findById(idTema);
-		
-		if(usuarioValido.isPresent() && temaValido.isPresent()){
-		
-			return ResponseEntity.ok(service.inscreverTema(idTema, idUsuario));
-		
-		}else {
-			
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: Usuario e/ou tema não cadastrado!");
-			
-		}
-		
+			if(usuarioValido.isEmpty() || temaValido.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessages.USER_OR_THEME_NOT_FOUND);
+			}
+		return ResponseEntity.ok(service.inscreverTema(idTema, idUsuario));
 	}
 	
 	@PutMapping
 	@ApiOperation(value="Atualiza dados do Usuário")
-	public ResponseEntity<?> put(@RequestBody Usuario usuario){
+	public ResponseEntity<Object> put(@RequestBody Usuario usuario){
 		return  ResponseEntity.ok(service.atualizaUsuario(usuario));
 	}
 	

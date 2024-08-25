@@ -13,11 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 public class BasicSecurityConfig extends WebSecurityConfigurerAdapter{
-	
-	@Autowired
+
 	private UserDetailsService userDetailsService;
-	
-	@Override
+
+	@Autowired
+    public BasicSecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Override
 	protected void configure(AuthenticationManagerBuilder authentication) throws Exception {
 		authentication.userDetailsService(userDetailsService);
 	}
@@ -30,9 +34,9 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception{
 		http.authorizeRequests()
-		.antMatchers("/**").permitAll()
 		.antMatchers("/usuario/login").permitAll()
 		.antMatchers("/usuario/cadastrar").permitAll()
+		.antMatchers("/**").permitAll()
 		.anyRequest().authenticated()
 		.and().httpBasic()
 		.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
